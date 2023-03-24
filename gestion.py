@@ -24,9 +24,13 @@ class Database:
     def close_connector(self):
         self.connector.close()
 
-    def add_product(self, nom, description, prix, quantite, id_categorie):
-        add_item = "INSERT into produit (nom, description, prix, quantite, id_categorie) VALUES(?,?,?,?,?)"
-        self.cursor.execute(add_item, (nom, description, prix, quantite, id_categorie))
+    def add_product(self, nom, description, prix, quantite, id_categorie, categorie):
+        add_item = "INSERT into produit (nom, description, prix, quantite, id_categorie) VALUES(%s,%s,%s,%s,%s)"
+        add_cat = "INSERT into categorie (nom) VALUES (%s)"
+        data = (nom, description, prix, quantite, id_categorie)
+        self.cursor.execute(add_item, data)
+        self.connector.commit()
+        self.cursor.execute(add_cat, categorie)
         self.connector.commit()
 
     def del_product(self, id):
