@@ -25,17 +25,27 @@ class Database:
         self.connector.close()
 
     def add_product(self, nom, description, prix, quantite, id_categorie, categorie):
+        obj = self.load("produit")
         add_item = "INSERT into produit (nom, description, prix, quantite, id_categorie) VALUES(%s,%s,%s,%s,%s)"
         add_cat = "INSERT into categorie (nom) VALUES (%s)"
         data = (nom, description, prix, quantite, id_categorie)
-        self.cursor.execute(add_item, data)
-        self.connector.commit()
-        self.cursor.execute(add_cat, categorie)
-        self.connector.commit()
+        cat = [categorie]
+        if nom not in obj:
+            self.cursor.execute(add_item, data)
+            self.connector.commit()
+        if categorie not in obj:
+            self.cursor.execute(add_cat, cat)
+            self.connector.commit()
+
+    def insert_last_item(self):
+        self.cursor.execute("SELECT produit.id, produit.nom, produit.description, produit.prix, produit.quantite,"
+                            " categorie.nom FROM produit JOIN categorie ON id_categorie = categorie.id ORDER BY ID DESC LIMIT 1")
+        item = self.cursor.fetchall()
+        return item
 
     def del_product(self, id):
         del_item = "DELETE FROM produit WHERE id = ?"
-        self.cursor.execute(del_item, (id,))
+        self.cursor.execute(del_item, id)
         self.connector.commit()
 
     def mod_product(self, id, nom, description, prix, quantite, categorie):
