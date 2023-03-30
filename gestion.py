@@ -43,12 +43,22 @@ class Database:
         item = self.cursor.fetchall()
         return item
 
-    def del_product(self, id):
-        del_item = "DELETE FROM produit WHERE id = ?"
-        self.cursor.execute(del_item, id)
+    def del_product(self, num):
+        del_item = "DELETE FROM produit WHERE id = %s"
+        self.cursor.execute(del_item, num)
         self.connector.commit()
 
-    def mod_product(self, id, nom, description, prix, quantite, categorie):
+    def select_deleted_product(self, num):
+        selected = "SELECT FROM produit WHERE id = %s"
+        self.cursor.execute(selected, num)
+        self.connector.commit()
+
+    def mod_product(self, nom, description, prix, quantite, id_categorie, categorie):
         mod_item = "UPDATE produit SET nom = ?, description = ?, prix = ?, quantite = ?, id_categorie = ? WHERE id = ?;"
-        self.cursor.execute(mod_item, (nom, description, prix, quantite, categorie, id,))
+        mod_cat = "UPDATE categorie SET nom = ? WHERE id = ?;"
+        data = (nom, description, prix, quantite, id_categorie)
+        cat = [categorie]
+        self.cursor.execute(mod_item, data)
+        self.connector.commit()
+        self.cursor.execute(mod_cat, cat)
         self.connector.commit()
