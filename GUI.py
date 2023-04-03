@@ -28,7 +28,7 @@ class GUI:
             print(self.tree_box, type(self.tree_box))
 
     def clear_text(self):  # Clear all data entries
-        if self.state == 1 or 3:
+        if self.state == 1:
             self.nom.delete(0, 'end')
             self.description.delete(0, 'end')
             self.prix.delete(0, 'end')
